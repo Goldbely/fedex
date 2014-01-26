@@ -34,6 +34,7 @@ module Fedex
         xml.RequestedShipment{
           if @shipping_options[:ship_timestamp]
             xml.ShipTimestamp @shipping_options[:ship_timestamp].strftime("%FT%T%:z") 
+          end
           xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
           xml.ServiceType service_type if service_type
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"

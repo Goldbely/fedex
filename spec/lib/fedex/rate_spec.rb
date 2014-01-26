@@ -186,6 +186,10 @@ module Fedex
             rates.first.should respond_to(:service_type)
           end
 
+          it 'has delivery time attribute' do
+            rates.first.should respond_to(:delivery_timestamp)            
+          end
+
         end
 
       end
