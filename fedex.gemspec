@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.license = 'MIT'
 
-  s.add_dependency 'httparty',            '~> 0.12.0'
+  s.add_dependency 'httparty'
   s.add_dependency 'nokogiri',            '~> 1.6.0'
 
   s.add_development_dependency "rspec",   '~> 2.9.0'
