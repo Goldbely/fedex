@@ -14,7 +14,7 @@ module Fedex
 
           rate_reply_details.map do |rate_reply|
             rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
-            rate_details.merge!(service_type: rate_reply[:service_type], delivery_timestamp: rate_reply[:delivery_timestamp])
+            rate_details.merge!(service_type: rate_reply[:service_type], delivery_timestamp: rate_reply[:delivery_timestamp].try(:to_datetime))
             Fedex::Rate.new(rate_details)
           end
         else
