@@ -172,7 +172,8 @@ module Fedex
           fedex.rate({
             :shipper => shipper,
             :recipient => recipient,
-            :packages => packages
+            :packages => packages,
+            :shipping_options => { :ship_timestamp => Time.now }
           })
         }
 
@@ -183,11 +184,21 @@ module Fedex
         context "each rate" do
 
           it 'has service type attribute' do
-            rates.first.should respond_to(:service_type)
+            rates.each do |r|
+              r.should respond_to(:service_type)
+            end
           end
 
           it 'has delivery time attribute' do
-            rates.first.should respond_to(:delivery_timestamp)            
+            rates.each do |r|
+              r.should respond_to(:delivery_timestamp)
+            end            
+          end
+
+          it 'has non-nil delivery time attribute' do
+            rates.each do |r|
+              r.delivery_timestamp.should_not be_nil
+            end
           end
 
         end
