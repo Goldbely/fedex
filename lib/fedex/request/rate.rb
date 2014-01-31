@@ -17,10 +17,10 @@ module Fedex
             rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
             rate_details.merge!(service_type: rate_reply[:service_type], delivery_timestamp: rate_reply[:delivery_timestamp].try(:to_datetime))
             unless rate_details[:delivery_timestamp]
-              if @shipping_options[ :ship_timestamp ] && rate_reply[:transit_time]
-                transit_time = transit_time_to_number( rate_reply[ :transit_time ] )
-                if transit_time
-                  rate_details[ :delivery_timestamp ] = transit_time.business_days.after( @shipping_options[ :ship_timestamp ] )
+              if @shipping_options[:ship_timestamp] && rate_reply[:transit_time]
+                if transit_time = transit_time_to_number(rate_reply[:transit_time])
+                  rate_details[:delivery_timestamp] = transit_time.business_days.after(@shipping_options[:ship_timestamp]).to_datetime
+                  rate_details[:transit_business_days] = transit_time
                 end
               end
             end
@@ -94,8 +94,8 @@ module Fedex
       # Add information for shipments
       def add_requested_shipment(xml)
         xml.RequestedShipment{
-          if @shipping_options[:ship_timestamp]
-            xml.ShipTimestamp @shipping_options[:ship_timestamp].strftime("%FT%T%:z") 
+          if ship_timestamp = @shipping_options[:ship_timestamp]
+            xml.ShipTimestamp ship_timestamp.strftime("%FT%T%:z") 
           end
           xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
           xml.ServiceType service_type if service_type

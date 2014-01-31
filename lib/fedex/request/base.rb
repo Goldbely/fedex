@@ -50,6 +50,9 @@ module Fedex
         @shipper, @recipient, @packages, @service_type, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance], options[:debug]
         @debug = ENV['DEBUG'] == 'true'
         @shipping_options =  options[:shipping_options] ||={}
+        if @shipping_options.has_key?(:ship_timestamp) 
+          @shipping_options[:ship_timestamp] = @shipping_options[:ship_timestamp].try(:to_datetime)
+        end
         @payment_options = options[:payment_options] ||={}
         requires!(@payment_options, :type, :account_number, :name, :company, :phone_number, :country_code) if @payment_options.length > 0
         # Expects hash with addr and port

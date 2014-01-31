@@ -173,7 +173,7 @@ module Fedex
             :shipper => shipper,
             :recipient => recipient,
             :packages => packages,
-            :shipping_options => { :ship_timestamp => Time.now }
+            :shipping_options => { :ship_timestamp => DateTime.new(2014, 1, 31, 10, 17, 0) }
           })
         }
 
@@ -183,22 +183,23 @@ module Fedex
 
         context "each rate" do
 
-          it 'has service type attribute' do
-            rates.each do |r|
-              r.should respond_to(:service_type)
-            end
-          end
-
-          it 'has delivery time attribute' do
-            rates.each do |r|
-              r.should respond_to(:delivery_timestamp)
-            end            
-          end
-
-          it 'has non-nil delivery time attribute' do
-            rates.each do |r|
-              r.delivery_timestamp.should_not be_nil
-            end
+          it 'has the proper service type, delivery time and cost' do
+            rates.map do |r|
+              {
+                service_type: r.service_type,
+                delivery_timestamp: r.delivery_timestamp,
+                total_net_charge: r.total_net_charge,
+                transit_business_days: r.transit_business_days
+              }
+            end.should =~ [
+              { service_type: 'FIRST_OVERNIGHT', delivery_timestamp: DateTime.new(2014, 2, 3, 8, 0, 0), total_net_charge: '206.62', transit_business_days: nil },
+              { service_type: 'PRIORITY_OVERNIGHT', delivery_timestamp: DateTime.new(2014, 2, 3, 10, 30, 0), total_net_charge: '80.62', transit_business_days: nil },
+              { service_type: 'STANDARD_OVERNIGHT', delivery_timestamp: DateTime.new(2014, 2, 3, 20, 0, 0), total_net_charge: '132.46', transit_business_days: nil },
+              { service_type: 'FEDEX_2_DAY_AM', delivery_timestamp: DateTime.new(2014, 2, 4, 10, 30, 0), total_net_charge: '54.7', transit_business_days: nil },
+              { service_type: 'FEDEX_2_DAY', delivery_timestamp: DateTime.new(2014, 2, 4, 20, 0, 0), total_net_charge: '48.58', transit_business_days: nil },
+              { service_type: 'FEDEX_EXPRESS_SAVER', delivery_timestamp: DateTime.new(2014, 2, 5, 20, 0, 0), total_net_charge: '45.2', transit_business_days: nil },
+              { service_type: 'GROUND_HOME_DELIVERY', delivery_timestamp: DateTime.new(2014, 2, 4, 10, 17, 0), total_net_charge: '24.34', transit_business_days: 2 }
+            ]
           end
 
         end
