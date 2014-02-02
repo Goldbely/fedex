@@ -15,7 +15,9 @@ module Fedex
 
           rate_reply_details.map do |rate_reply|
             rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
-            rate_details.merge!(service_type: rate_reply[:service_type], delivery_timestamp: rate_reply[:delivery_timestamp].try(:to_datetime))
+            rate_details.merge!(service_type: rate_reply[:service_type], 
+                                ship_timestamp: @shipping_options[:ship_timestamp],
+                                delivery_timestamp: rate_reply[:delivery_timestamp].try(:to_datetime))
             unless rate_details[:delivery_timestamp]
               if @shipping_options[:ship_timestamp] && rate_reply[:transit_time]
                 if transit_time = transit_time_to_number(rate_reply[:transit_time])

@@ -168,12 +168,13 @@ module Fedex
 
       context "with no service type specified", :vcr do
 
+        let(:ship_timestamp) { DateTime.new(2014, 1, 31, 10, 17, 0) }
         let(:rates) {
           fedex.rate({
             :shipper => shipper,
             :recipient => recipient,
             :packages => packages,
-            :shipping_options => { :ship_timestamp => DateTime.new(2014, 1, 31, 10, 17, 0) }
+            :shipping_options => { :ship_timestamp => ship_timestamp }
           })
         }
 
@@ -187,18 +188,19 @@ module Fedex
             rates.map do |r|
               {
                 service_type: r.service_type,
+                ship_timestamp: r.ship_timestamp,
                 delivery_timestamp: r.delivery_timestamp,
                 total_net_charge: r.total_net_charge,
                 transit_business_days: r.transit_business_days
               }
             end.should =~ [
-              { service_type: 'FIRST_OVERNIGHT', delivery_timestamp: DateTime.new(2014, 2, 3, 8, 0, 0), total_net_charge: '206.62', transit_business_days: nil },
-              { service_type: 'PRIORITY_OVERNIGHT', delivery_timestamp: DateTime.new(2014, 2, 3, 10, 30, 0), total_net_charge: '80.62', transit_business_days: nil },
-              { service_type: 'STANDARD_OVERNIGHT', delivery_timestamp: DateTime.new(2014, 2, 3, 20, 0, 0), total_net_charge: '132.46', transit_business_days: nil },
-              { service_type: 'FEDEX_2_DAY_AM', delivery_timestamp: DateTime.new(2014, 2, 4, 10, 30, 0), total_net_charge: '54.7', transit_business_days: nil },
-              { service_type: 'FEDEX_2_DAY', delivery_timestamp: DateTime.new(2014, 2, 4, 20, 0, 0), total_net_charge: '48.58', transit_business_days: nil },
-              { service_type: 'FEDEX_EXPRESS_SAVER', delivery_timestamp: DateTime.new(2014, 2, 5, 20, 0, 0), total_net_charge: '45.2', transit_business_days: nil },
-              { service_type: 'GROUND_HOME_DELIVERY', delivery_timestamp: DateTime.new(2014, 2, 4, 10, 17, 0), total_net_charge: '24.34', transit_business_days: 2 }
+              { service_type: 'FIRST_OVERNIGHT', ship_timestamp: ship_timestamp, delivery_timestamp: DateTime.new(2014, 2, 3, 8, 0, 0), total_net_charge: '206.62', transit_business_days: nil },
+              { service_type: 'PRIORITY_OVERNIGHT', ship_timestamp: ship_timestamp, delivery_timestamp: DateTime.new(2014, 2, 3, 10, 30, 0), total_net_charge: '80.62', transit_business_days: nil },
+              { service_type: 'STANDARD_OVERNIGHT', ship_timestamp: ship_timestamp, delivery_timestamp: DateTime.new(2014, 2, 3, 20, 0, 0), total_net_charge: '132.46', transit_business_days: nil },
+              { service_type: 'FEDEX_2_DAY_AM', ship_timestamp: ship_timestamp, delivery_timestamp: DateTime.new(2014, 2, 4, 10, 30, 0), total_net_charge: '54.7', transit_business_days: nil },
+              { service_type: 'FEDEX_2_DAY', ship_timestamp: ship_timestamp, delivery_timestamp: DateTime.new(2014, 2, 4, 20, 0, 0), total_net_charge: '48.58', transit_business_days: nil },
+              { service_type: 'FEDEX_EXPRESS_SAVER', ship_timestamp: ship_timestamp, delivery_timestamp: DateTime.new(2014, 2, 5, 20, 0, 0), total_net_charge: '45.2', transit_business_days: nil },
+              { service_type: 'GROUND_HOME_DELIVERY', ship_timestamp: ship_timestamp, delivery_timestamp: DateTime.new(2014, 2, 4, 10, 17, 0), total_net_charge: '24.34', transit_business_days: 2 }
             ]
           end
 
